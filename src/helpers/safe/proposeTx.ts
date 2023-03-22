@@ -51,12 +51,17 @@ async function main() {
     ethers.utils.parseEther(String(config.BOUNTY_HUNTER_REWARD_ETH)).toString()
   );
 
+  // get next safe tx nonce (safe nonces are different from EOA nonces)
+  // next nonce is the next nonce after the last queued (not yet executed) transaction
+  const nextNonce = await service.getNextNonce(config.SAFE_ADDRESS);
+
   // create transaction
   const safeTransactionData: SafeTransactionDataPartial = {
     to: config.DAI_ADDRESS,
     value: "0", // in wei
     data: String(transferData.data),
     operation: OperationType.Call,
+    nonce: nextNonce,
   };
   const safeTransaction = await safe.createTransaction({ safeTransactionData });
 
