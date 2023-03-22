@@ -6,6 +6,7 @@ import { GelatoRelayAdapter } from "@safe-global/relay-kit";
 import EthersAdapter from "@safe-global/safe-ethers-lib";
 import SafeServiceClient from "@safe-global/safe-service-client";
 import { ethers } from "ethers";
+import GNOSIS_SAFE from "./gnosis_safe.json";
 
 const config = {
   CHAIN_ID: 5, // mainnet: 1, goerli: 5
@@ -37,13 +38,29 @@ async function main() {
   if (pendingTxs.results.length > 0) {
     // get latest pending tx
     const latestPendingTx = pendingTxs.results[pendingTxs.results.length - 1];
+
     // if latest pending tx is signed by all parties
     if (latestPendingTx.confirmations?.length === latestPendingTx.confirmationsRequired) {
+      // prepare tx data
+      const safeContract = new ethers.Contract(config.SAFE_ADDRESS, GNOSIS_SAFE.abi);
+      const execTransactionData = await safeContract.populateTransaction.execTransaction(
+        latestPendingTx.to, // destination address of safe tx
+        0, // ether value
+        latestPendingTx.data, // data payload of safe tx
+        0, // operation, call or delegatecall
+        0, // safe tx gas
+        0, // base gas
+        0, // gas price
+        config.DAI_ADDRESS, // gas token used for payment (0x0 for ETH)
+        "0x0000000000000000000000000000000000000000", // refund receiver
+        `0x${latestPendingTx.confirmations[0].signature.replace("0x", "")}${latestPendingTx.confirmations[1].signature.replace("0x", "")}` // signatures
+      );
+
       // relay tx
       const relayAdapter = new GelatoRelayAdapter();
       const response = await relayAdapter.relayTransaction({
         target: config.SAFE_ADDRESS,
-        encodedTransaction: String(latestPendingTx.data),
+        encodedTransaction: String(execTransactionData.data),
         chainId: config.CHAIN_ID,
         options: {
           gasLimit: ethers.BigNumber.from(120_000),
