@@ -9,6 +9,7 @@ import { OperationType, SafeTransactionDataPartial } from "@safe-global/safe-cor
 import EthersAdapter from "@safe-global/safe-ethers-lib";
 import SafeServiceClient from "@safe-global/safe-service-client";
 import { ethers } from "ethers";
+import DAI_ABI from "./DAI_abi.json";
 
 const config = {
   CHAIN_ID: 5, // mainnet: 1, goerli: 5
@@ -16,7 +17,9 @@ const config = {
   BOT_PRIVATE_KEY: "0xa3bfde12b832ab44f303ecb8acfb5042190f357ec7712a8597c29ba1e1a31708",
   SAFE_ADDRESS: "0x839F2406464B98128c67c00dB9408F07bB9D4629",
   TX_SERVICE_URL: "https://safe-transaction-goerli.safe.global/", // Check https://docs.safe.global/backend/available-services
+  DAI_ADDRESS: "0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844", // mainnet: 0x6B175474E89094C44Da98b954EedeAC495271d0F, goerli: 0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844
   BOUNTY_HUNTER_ADDRESS: "0x9694227ef9516A6AB4FBF30039686E5f1AeF0b41",
+  BOUNTY_HUNTER_REWARD_ETH: 1,
 };
 
 async function main() {
@@ -41,11 +44,18 @@ async function main() {
     ethAdapter,
   });
 
+  // create DAI contract instance
+  const daiContract = new ethers.Contract(config.DAI_ADDRESS, DAI_ABI);
+  const transferData = await daiContract.populateTransaction.transfer(
+    config.BOUNTY_HUNTER_ADDRESS,
+    ethers.utils.parseEther(String(config.BOUNTY_HUNTER_REWARD_ETH)).toString()
+  );
+
   // create transaction
   const safeTransactionData: SafeTransactionDataPartial = {
-    to: config.BOUNTY_HUNTER_ADDRESS,
-    value: "4", // 1 wei
-    data: "0x",
+    to: config.DAI_ADDRESS,
+    value: "0", // in wei
+    data: String(transferData.data),
     operation: OperationType.Call,
   };
   const safeTransaction = await safe.createTransaction({ safeTransactionData });
