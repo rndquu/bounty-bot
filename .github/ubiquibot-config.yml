@@ -1,4 +1,4 @@
-evm-network-id: 100
+chain-id: 100
 price-multiplier: 1.5
 time-labels:
   - name: "Time: <1 Hour"
