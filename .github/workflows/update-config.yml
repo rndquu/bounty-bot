@@ -26,7 +26,7 @@ jobs:
 
       - name: Update Config Params and Create Pull Requests
         run: |
-         urls=$(curl -sSL https://raw.githubusercontent.com/ubiquity/devpool-directory/development/projects.json | jq -r '.urls[]')
+         urls=$(curl -sSL https://raw.githubusercontent.com/rndquu/bounty-bot/development/projects.json | jq -r '.urls[]')
 
           for url in $urls
           do
