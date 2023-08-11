@@ -13,28 +13,16 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       
-      - name: Set up git
+      - name: Set up Git
         run: |
-          git config --global user.email "UbiquiBot[dev]@github.com" 
-          git config --global user.name "UbiquiBot[dev]" 
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
       - name: Install jq and yq
         run: |
           sudo apt-get -y install jq
           sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
           sudo chmod +x /usr/bin/yq
-
-      - name: Authenticate SSH 
-        uses: webfactory/ssh-agent@v0.4.0 
-        with: 
-          ssh-private-key: ${{ secrets.UBIQUITY_BOUNTY_BOT_DEV_PRIVATE_KEY_OPENSSH }} 
-        env: 
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true 
-   
-      - name: Commit and Push Changes 
-        run: | 
-          git config --local user.email "UbiquiBot[dev]@github.com" 
-          git config --local user.name "UbiquiBot[dev]" 
 
       - name: Update Config Params and Create Pull Requests
         run: |
