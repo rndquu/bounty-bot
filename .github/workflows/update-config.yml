@@ -78,6 +78,8 @@ jobs:
             git add .github/ubiquibot-config.yml
             git commit -m "build: use latest ubiquibot config setup"
             git remote set-url origin git@github.com:$ownerName/$repoName.git
+            git push -f git@github.com:${{github.repository}}.git update
+                       
 
 
             cd ..
