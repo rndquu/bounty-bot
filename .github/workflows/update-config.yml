@@ -42,4 +42,6 @@ jobs:
             git branch update
             git checkout update
 
+            curl -sSL https://raw.githubusercontent.com/ubiquity/ubiquibot/development/ubiquibot-config-default.json > default.json
+
           done
