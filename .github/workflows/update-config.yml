@@ -74,6 +74,11 @@ jobs:
                 mv temp.yml .github/ubiquibot-config.yml
               fi
             done
+            
+            git add .github/ubiquibot-config.yml
+            git commit -m "build: use latest ubiquibot config setup"
+            git remote set-url origin git@github.com:$ownerName/$repoName.git
+
 
             cd ..
           done
