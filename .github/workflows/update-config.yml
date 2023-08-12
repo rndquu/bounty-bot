@@ -41,3 +41,5 @@ jobs:
             # make a branch to update config #
             git branch update
             git checkout update
+
+          done
