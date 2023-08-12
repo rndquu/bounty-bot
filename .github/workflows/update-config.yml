@@ -44,4 +44,36 @@ jobs:
 
             curl -sSL https://raw.githubusercontent.com/ubiquity/ubiquibot/development/ubiquibot-config-default.json > default.json
 
+
+            declare -A param_mapping=(
+              ["evm-network-id"]="network-id chain-id"
+              ["price-multiplier"]="base-multiplier"
+              #add more configs as needed
+            )
+            
+            ### update configs ###
+            # Iterate over the mapping and perform updates using sed
+            for new_param in "${!param_mapping[@]}"
+            do
+              old_params="${param_mapping[$new_param]}"
+              for old_param in $old_params
+              do
+                # only update param if the old ones exist
+                exist_old_param=$(yq "has(\"$old_param\")" .github/ubiquibot-config.yml)
+                if $exist_old_param; then
+                    yq ".$new_param = .$old_param | del(.$old_param)" .github/ubiquibot-config.yml > temp.yml
+                    mv temp.yml .github/ubiquibot-config.yml
+                fi 
+              done
+              # if new param still doesent exist add default from ubiquibot-config-default.json
+              exist_new_param=$(yq "has(\"$new_param\")" .github/ubiquibot-config.yml)
+              if ! $exist_new_param; then
+                echo adding
+                def_val=$(jq -r ".[\"$new_param\"]" ubiquibot-config-default.json)
+                yq ".$new_param=$def_val" .github/ubiquibot-config.yml > temp.yml
+                mv temp.yml .github/ubiquibot-config.yml
+              fi
+            done
+
+            cd ..
           done
