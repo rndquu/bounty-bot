@@ -13,11 +13,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       
-      - name: Set up Git
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
       - name: Install jq and yq
         run: |
           sudo apt-get -y install jq
@@ -26,7 +21,7 @@ jobs:
 
       - name: Update Config Params and Create Pull Requests
         run: |
-         urls=$(curl -sSL https://raw.githubusercontent.com/rndquu/bounty-bot/development/projects.json | jq -r '.urls[]')
+          urls=$(curl -sSL https://raw.githubusercontent.com/rndquu/bounty-bot/development/projects.json | jq -r '.urls[]')
 
           for url in $urls
           do
@@ -74,11 +69,14 @@ jobs:
                 mv temp.yml .github/ubiquibot-config.yml
               fi
             done
-            
+
+            git config user.email "113181824+UbiquiBot[bot]@users.noreply.github.com" 
+            git config user.name "UbiquiBot[bot]"   
+
             git add .github/ubiquibot-config.yml
             git commit -m "build: use latest ubiquibot config setup"
-            git remote set-url origin git@github.com:$ownerName/$repoName.git
-            git push -f git@github.com:${{github.repository}}.git update
+            git remote set-url origin https://${{ secrets.PAT_TOKEN }}@github.com/$ownerName/$repoName.git
+            git push -f origin update
                        
             curl -L \
             -X POST \
