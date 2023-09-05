@@ -1,4 +1,5 @@
 {
+  "my-test-param": 999,
   "evm-network-id": 100,
   "price-multiplier": 1,
   "issue-creator-multiplier": 2,
