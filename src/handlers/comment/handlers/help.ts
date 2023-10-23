@@ -29,7 +29,7 @@ export const listAvailableCommands = async (body: string) => {
 export const generateHelpMenu = () => {
   const config = getBotConfig();
   const startEnabled = config.command.find((command) => command.name === "start");
-  let helpMenu = "### Available commands\n```";
+  let helpMenu = "### Available commands !--! \n```";
   const commands = userCommands();
   commands.map((command) => {
     // if first command, add a new line
