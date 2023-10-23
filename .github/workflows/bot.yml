@@ -28,6 +28,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Debug
+        run: |
+          echo ${{ github.event_name }}
+          echo ${{ github.event.pull_request.head.sha }}
+          echo ${{ github.sha }}
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
